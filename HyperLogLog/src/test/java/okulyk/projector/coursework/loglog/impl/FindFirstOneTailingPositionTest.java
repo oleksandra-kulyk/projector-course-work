@@ -34,7 +34,7 @@ public class FindFirstOneTailingPositionTest {
     public void findFirstOneTailingPosition() {
         byte[] valueInBytes = Ints.toByteArray(input);
 
-        int position = simpleLogLog.findFirstOneTailingPosition(valueInBytes);
+        int position = simpleLogLog.findLeftmostOnePositionStartingFromK(valueInBytes);
 
         assertEquals(expectedPosition, position);
     }

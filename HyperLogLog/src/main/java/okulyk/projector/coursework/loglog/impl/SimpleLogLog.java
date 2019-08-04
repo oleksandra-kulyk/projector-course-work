@@ -4,23 +4,35 @@ import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import okulyk.projector.coursework.loglog.LogLog;
 
+import java.util.Arrays;
+import java.util.IntSummaryStatistics;
+
 public class SimpleLogLog implements LogLog {
 
     private final HashFunction hashFunction;
+    private final int countOfFirstBitsToTake;
     private final int[] maxRankForBucket;
+    private final int bucketsCount;
 
-    public SimpleLogLog(HashFunction hashFunction, int bucketsCount) {
+    public SimpleLogLog(HashFunction hashFunction, int countOfFirstBitsToTake) {
         this.hashFunction = hashFunction;
+        this.countOfFirstBitsToTake = countOfFirstBitsToTake;
+        bucketsCount = 1 << countOfFirstBitsToTake;
         maxRankForBucket = new int[bucketsCount];
     }
 
     public void add(byte[] input) {
         HashCode hashCode = hashFunction.hashBytes(input);
         byte[] hashAsBytes = hashCode.asBytes();
-        int rank = findFirstOneTailingPosition(hashAsBytes);
+        int rank = findLeftmostOnePositionStartingFromK(countOfFirstBitsToTake, hashAsBytes);
+        int bucket = takeFirstKBitsAsInt(countOfFirstBitsToTake, hashAsBytes);
+
+        if (maxRankForBucket[bucket] < rank) {
+            maxRankForBucket[bucket] = rank;
+        }
     }
 
-    public int findFirstOneTailingPosition(byte[] bytes) {
+    public int findLeftmostOnePositionStartingFromK(int k, byte[] bytes) {
         int position = 1;
         for (int i = bytes.length - 1; i >= 0; i--) {
             byte aByte = bytes[i];
@@ -47,9 +59,17 @@ public class SimpleLogLog implements LogLog {
         return result;
     }
 
+    public int getCardinality() {
+        double average = calculateAverage();
+        double alfaConstant = 0.79402;
+        return (int) (alfaConstant * bucketsCount * Math.pow(2, average));
+    }
 
-    public void getCardinality() {
-
+    private double calculateAverage() {
+        IntSummaryStatistics statistics = Arrays.stream(maxRankForBucket)
+                .summaryStatistics();
+        double average = statistics.getAverage();
+        return average;
     }
 
 }
