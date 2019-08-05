@@ -34,13 +34,16 @@ public class SimpleLogLog implements LogLog {
 
     public int findLeftmostOnePositionStartingFromK(int k, byte[] bytes) {
         int position = 1;
-        for (int i = bytes.length - 1; i >= 0; i--) {
+        for (int i = 0; i < bytes.length; i++) {
             byte aByte = bytes[i];
-            for (int j = 0; j < 8; j++) {
-                if (((aByte >> j) & 1) == 1) {
-                    return position;
+            for (int j = 7; j >= 0; j--) {
+                if (i * 8 + (7 - j) >= k) { //skipFirstKBits
+                    int bit = aByte & (1 << j);
+                    if (bit > 0) {
+                        return position;
+                    }
+                    position++;
                 }
-                position++;
             }
         }
         return 0;
