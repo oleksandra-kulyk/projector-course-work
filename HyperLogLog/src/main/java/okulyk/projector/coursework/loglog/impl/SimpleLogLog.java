@@ -5,7 +5,6 @@ import com.google.common.hash.HashFunction;
 import okulyk.projector.coursework.loglog.LogLog;
 
 import java.util.Arrays;
-import java.util.IntSummaryStatistics;
 
 public class SimpleLogLog implements LogLog {
 
@@ -69,9 +68,13 @@ public class SimpleLogLog implements LogLog {
     }
 
     private double calculateAverage() {
-        IntSummaryStatistics statistics = Arrays.stream(maxRankForBucket)
-                .summaryStatistics();
-        double average = statistics.getAverage();
+        Arrays.sort(maxRankForBucket);
+        int sum = 0;
+        double countToTake = bucketsCount * 0.7;
+        for (int i = 0; i < countToTake; i++) { //skip max 30%
+            sum += maxRankForBucket[i];
+        }
+        double average = sum / countToTake;
         return average;
     }
 
