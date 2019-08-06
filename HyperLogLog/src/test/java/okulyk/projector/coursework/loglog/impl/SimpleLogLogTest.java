@@ -1,15 +1,14 @@
 package okulyk.projector.coursework.loglog.impl;
 
+import com.google.common.hash.Hashing;
 import com.google.common.primitives.Ints;
 import org.junit.Test;
 
 import java.util.HashSet;
 import java.util.Random;
 
-import static com.google.common.hash.Hashing.murmur3_128;
-
 public class SimpleLogLogTest {
-    private SimpleLogLog simpleLogLog = new SimpleLogLog(murmur3_128(), 8);
+    private SimpleLogLog simpleLogLog = new SimpleLogLog(Hashing.murmur3_128(), 5);
     private final Random random = new Random();
 
     @Test

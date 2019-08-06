@@ -62,12 +62,10 @@ public class SimpleLogLog implements LogLog {
     }
 
     public int getCardinality() {
-        double average = calculateAverage();
-        double alfaConstant = 0.79402;
-        return (int) (alfaConstant * bucketsCount * Math.pow(2, average));
+        return hyperLogLog();
     }
 
-    private double calculateAverage() {
+    private int superLogLog() {
         Arrays.sort(maxRankForBucket);
         int sum = 0;
         double countToTake = bucketsCount * 0.7;
@@ -75,7 +73,19 @@ public class SimpleLogLog implements LogLog {
             sum += maxRankForBucket[i];
         }
         double average = sum / countToTake;
-        return average;
+
+        double alphaConstant = 0.79402;
+        return (int) (alphaConstant * bucketsCount * Math.pow(2, average));
+    }
+
+    private int hyperLogLog() {
+        double harmonicSum = 0;
+        for (int i = 0; i < bucketsCount; i++) {
+            harmonicSum += 1 / Math.pow(2, maxRankForBucket[i]);
+        }
+
+        double alphaConstant = 0.7213 / (1 + 1.079/bucketsCount);
+        return (int) ((alphaConstant * bucketsCount * bucketsCount) / harmonicSum);
     }
 
 }
