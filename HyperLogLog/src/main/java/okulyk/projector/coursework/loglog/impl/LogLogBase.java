@@ -32,4 +32,7 @@ public abstract class LogLogBase implements LogLog {
         }
     }
 
+    public int[] getMaxRankForBucket() {
+        return maxRankForBucket;
+    }
 }
