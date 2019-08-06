@@ -1,4 +1,4 @@
-package okulyk.projector.coursework.loglog.impl;
+package okulyk.projector.coursework.loglog;
 
 import com.google.common.primitives.Ints;
 import org.junit.Test;
@@ -8,7 +8,7 @@ import org.junit.runners.Parameterized;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static com.google.common.hash.Hashing.murmur3_32;
+import static okulyk.projector.coursework.loglog.BitUtils.findLeftmostOnePositionStartingFromK;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Parameterized.class)
@@ -34,14 +34,12 @@ public class FindLeftmostOnePositionStartingFromK {
         this.expectedPosition = expectedPosition;
     }
 
-    private SimpleLogLog simpleLogLog = new SimpleLogLog(murmur3_32(), 8);
-
     @Test
     public void findFirstOneTailingPosition() {
         int inputAsInt = Integer.parseInt(inputAsBinaryString,2 );
         byte[] valueInBytes = Ints.toByteArray(inputAsInt);
 
-        int position = simpleLogLog.findLeftmostOnePositionStartingFromK(k, valueInBytes);
+        int position = findLeftmostOnePositionStartingFromK(k, valueInBytes);
 
         assertEquals(expectedPosition, position);
     }
