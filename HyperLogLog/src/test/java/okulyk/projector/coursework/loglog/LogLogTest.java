@@ -54,17 +54,19 @@ public class LogLogTest {
         for (String line : lines) {
             String[] columns = line.split(",");
             String ip = columns[1];
-            hyperLogLog.add(ip.getBytes());
+
+            byte[] bytes = ip.getBytes();
+            hyperLogLog.add(bytes);
             hashSet.add(ip);
             requestsCount++;
         }
 
-        printStatistic("ip", "IP", "murmur3", 128, "hyperLogLog", 8,
+        dumpStatistic("ip", "IP", "murmur3", 128, "hyperLogLog", 8,
                 requestsCount, hashSet, hyperLogLog);
     }
 
-    private void printStatistic(String dataSetShortName, String dataSetDescription, String hashName, int hashSize, String algorithmName, int bitsToTake,
-                                int requestsCount, Set set, LogLog logLog) throws IOException {
+    private void dumpStatistic(String dataSetShortName, String dataSetDescription, String hashName, int hashSize, String algorithmName, int bitsToTake,
+                               int requestsCount, Set set, LogLog logLog) throws IOException {
         int actualCardinality = set.size();
         int calculatedCardinality = logLog.getCardinality();
         int diff = calculatedCardinality - actualCardinality;
