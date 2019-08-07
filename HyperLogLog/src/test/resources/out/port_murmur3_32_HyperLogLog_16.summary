@@ -1,0 +1,6 @@
+Dataset: Port
+Hash function: murmur3, hash size: murmur3, algorithm: HyperLogLog, first bits count to take: 16
+
+Requests count: 3577297, actual cardinality: 40520, calculated cardinality: 47281
+Absolute mistake: 6761, mistake in percentage: 16.69
+Memory for set: 3.6105575561523438Mb, memory for LogLog: 256.015625Kb

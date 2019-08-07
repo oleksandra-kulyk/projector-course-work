@@ -1,0 +1,6 @@
+Dataset: Port
+Hash function: noHash, hash size: noHash, algorithm: HyperLogLog, first bits count to take: 8
+
+Requests count: 3577297, actual cardinality: 40520, calculated cardinality: 186
+Absolute mistake: -40334, mistake in percentage: -99.54
+Memory for set: 3.6105575561523438Mb, memory for LogLog: 1.015625Kb
