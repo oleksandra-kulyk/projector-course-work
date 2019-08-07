@@ -137,7 +137,7 @@ public class LogLogTest {
         String dataSetShortName = "sequentialUniqueHundredThousandInts";
 
         HashSet<Integer> hashSet = new HashSet<>();
-        int requestsCount = 100_000_000;
+        int requestsCount = 50_000_000;
 
         for (int i = 0; i < requestsCount; i++) {
             byte[] bytes = Ints.toByteArray(i);
@@ -160,7 +160,7 @@ public class LogLogTest {
 
 
         HashSet<Integer> hashSet = new HashSet<>();
-        int requestsCount = 100_000_000;
+        int requestsCount = 50_000_000;
 
         for (int i = 0; i < requestsCount; i++) {
             int randomInt = random.nextInt();
@@ -227,17 +227,29 @@ public class LogLogTest {
 
     private void dumpGeneralStatistic(String dataSetShortName, int requestsCount, Set set) throws IOException {
         int actualCardinality = set.size();
-        String setMemory = SizeOf.humanReadable(SizeOf.deepSizeOf(set));
+
+        String setMemory = "undef";
+        try {
+            setMemory = SizeOf.humanReadable(SizeOf.deepSizeOf(set));
+        } catch (Exception e) {
+            System.out.println(e);
+        }
 
         Path summaryFile = Paths.get(String.format("src/test/resources/out/generalStats/%s.csv", dataSetShortName));
 
         String header = "dataSetShortName,hashName,hashSize,algorithmName,bitsToTake,requestsCount,actualCardinality,calculatedCardinality,diff,diffInPercentage,setMemory,logLogMemory";
+        String finalSetMemory = setMemory;
         String results = logLogs.entrySet().stream()
                 .map(entry -> {
                     int calculatedCardinality = entry.getValue().getCardinality();
                     int diff = calculatedCardinality - actualCardinality;
                     double diffInPercentage = (double) diff / actualCardinality * 100;
-                    String logLogMemory = SizeOf.humanReadable(SizeOf.deepSizeOf(entry.getValue().getMaxRankForBucket()));
+                    String logLogMemory = "undef";
+                    try {
+                        logLogMemory = SizeOf.humanReadable(SizeOf.deepSizeOf(entry.getValue().getMaxRankForBucket()));
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
 
                     return String.format("%s,%s,%d,%s,%d,%d,%d,%d,%d,%.2f,%s,%s",
                             dataSetShortName,
@@ -250,7 +262,7 @@ public class LogLogTest {
                             calculatedCardinality,
                             diff,
                             diffInPercentage,
-                            setMemory,
+                            finalSetMemory,
                             logLogMemory);
                 })
                 .collect(Collectors.joining("\n"));
