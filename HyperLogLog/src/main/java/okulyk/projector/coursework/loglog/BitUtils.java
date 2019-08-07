@@ -21,7 +21,7 @@ public class BitUtils {
 
     public static int takeFirstKBitsAsInt(int k, byte[] bytes) {
         int result = 0;
-        for (int i = 0; i < k; i++) {
+        for (int i = 0; i < Math.min(k, bytes.length); i++) {
             byte aByte = bytes[i / 8];
             byte bitNumber = (byte) (7 - (i % 8));
             int bit = aByte & (1 << bitNumber);

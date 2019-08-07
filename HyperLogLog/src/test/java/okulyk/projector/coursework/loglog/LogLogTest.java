@@ -156,7 +156,6 @@ public class LogLogTest {
                 .mapToObj(String::valueOf)
                 .collect(Collectors.joining("\n"));
 
-        System.out.println(bucketsToFile);
         Files.write(bucketsFile, bucketsToFile.getBytes());
         System.out.println("Buckets stored to file " + bucketsFile);
     }
@@ -168,7 +167,6 @@ public class LogLogTest {
                 .map(Object::toString)
                 .collect(Collectors.joining("\n"));
 
-        System.out.println(distinctDatasetString);
         Files.write(distinctDatasetFile, distinctDatasetString.getBytes());
         System.out.println("Distinct dataset stored to file " + distinctDatasetFile);
     }

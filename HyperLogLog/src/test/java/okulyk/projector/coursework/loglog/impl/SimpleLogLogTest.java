@@ -2,13 +2,14 @@ package okulyk.projector.coursework.loglog.impl;
 
 import com.google.common.hash.Hashing;
 import com.google.common.primitives.Ints;
+import okulyk.projector.coursework.loglog.hash.GuavaHashWrapper;
 import org.junit.Test;
 
 import java.util.HashSet;
 import java.util.Random;
 
 public class SimpleLogLogTest {
-    private SimpleLogLog simpleLogLog = new SimpleLogLog(Hashing.murmur3_128(), 5);
+    private SimpleLogLog simpleLogLog = new SimpleLogLog(new GuavaHashWrapper(Hashing.murmur3_128()), 5);
     private final Random random = new Random();
 
     @Test
