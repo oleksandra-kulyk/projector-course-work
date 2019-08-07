@@ -1,0 +1,6 @@
+Dataset: IP
+Hash function: murmur3, hash size: murmur3, algorithm: SimpleLogLog, first bits count to take: 16
+
+Requests count: 3577297, actual cardinality: 6567, calculated cardinality: 52117
+Absolute mistake: 45550, mistake in percentage: 693.62
+Memory for set: 716.7421875Kb, memory for LogLog: 256.015625Kb
