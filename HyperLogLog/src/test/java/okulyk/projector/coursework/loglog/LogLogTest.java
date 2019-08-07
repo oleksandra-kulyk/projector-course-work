@@ -3,6 +3,7 @@ package okulyk.projector.coursework.loglog;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.hash.Hashing;
 import com.google.common.primitives.Ints;
+import com.google.common.primitives.Longs;
 import net.sourceforge.sizeof.SizeOf;
 import okulyk.projector.coursework.loglog.hash.GuavaHashWrapper;
 import okulyk.projector.coursework.loglog.hash.NoHash;
@@ -197,6 +198,51 @@ public class LogLogTest {
         int finalRequestsCount = requestsCount * iterationsCount;
 
         dumpStatistic(dataSetShortName, finalRequestsCount, hashSet);
+        dumpUniqueValues(dataSetShortName, hashSet);
+    }
+
+    @Test
+    public void sequentialUniqueHundredThousandLongs() throws IOException {
+        String dataSetShortName = "sequentialUniqueHundredThousandLongs";
+
+        HashSet<Integer> hashSet = new HashSet<>();
+        int requestsCount = 50_000_000;
+
+        for (int i = 0; i < requestsCount; i++) {
+            byte[] bytes = Longs.toByteArray(i + 9837942735983108L);
+            logLogs.forEach((key, value) -> value.add(bytes));
+            hashSet.add(i);
+
+            if (i % 10000 == 0) {
+                System.out.println(i);
+            }
+        }
+
+        dumpStatistic(dataSetShortName, requestsCount, hashSet);
+        dumpUniqueValues(dataSetShortName, hashSet);
+    }
+
+    @Test
+    public void randomHundredThousandLongs() throws IOException {
+        String dataSetShortName = "randomHundredThousandLongs";
+        Random random = new Random();
+
+
+        HashSet<Long> hashSet = new HashSet<>();
+        int requestsCount = 50_000_000;
+
+        for (int i = 0; i < requestsCount; i++) {
+            long nextLong = random.nextLong();
+            byte[] bytes = Longs.toByteArray(nextLong);
+            logLogs.forEach((key, value) -> value.add(bytes));
+            hashSet.add(nextLong);
+
+            if (i % 10000 == 0) {
+                System.out.println(i);
+            }
+        }
+
+        dumpStatistic(dataSetShortName, requestsCount, hashSet);
         dumpUniqueValues(dataSetShortName, hashSet);
     }
 
