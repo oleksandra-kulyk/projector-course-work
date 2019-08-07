@@ -1,13 +1,13 @@
 package okulyk.projector.coursework.loglog.impl;
 
-import com.google.common.hash.HashFunction;
+import okulyk.projector.coursework.loglog.HashWrapper;
 
 import java.util.Arrays;
 
 public class SuperLogLog extends LogLogBase {
 
-    public SuperLogLog(HashFunction hashFunction, int countOfFirstBitsToTake) {
-        super(hashFunction, countOfFirstBitsToTake);
+    public SuperLogLog(HashWrapper hashWrapper, int countOfFirstBitsToTake) {
+        super(hashWrapper, countOfFirstBitsToTake);
     }
 
     @Override

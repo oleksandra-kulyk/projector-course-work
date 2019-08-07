@@ -31,11 +31,11 @@ public class BitsStatsTest {
         for (String ip : hashSet) {
             byte[] bytes = ip.getBytes();
 
-            int leftmostOnePositionStartingFromK = BitUtils.findLeftmostOnePositionStartingFromK(12, bytes);
+            int leftmostOnePositionStartingFromK = BitUtils.findLeftmostOnePositionStartingFromK(0, bytes);
             incrementValueInBitsDistributionMap(noHash12BitDistribution, leftmostOnePositionStartingFromK);
         }
 
-        dumpBitsDistribution("ip", "murmur3", 128, 18, noHash12BitDistribution);
+        dumpBitsDistribution("ip", "murmur3", 128, noHash12BitDistribution);
     }
 
     private void incrementValueInBitsDistributionMap(HashMap<Integer, Integer> noHashBitDistribution, int leftmostOnePositionStartingFromK) {
@@ -48,8 +48,8 @@ public class BitsStatsTest {
         }
     }
 
-    private void dumpBitsDistribution(String dataSetShortName, String hashName, int hashSize, int kShift, Map<Integer, Integer> distributionMap) throws IOException {
-        Path distributionFile = Paths.get(String.format("src/test/resources/out/%s_%s_%d_%d-bits.distribution", dataSetShortName, hashName, hashSize, kShift));
+    private void dumpBitsDistribution(String dataSetShortName, String hashName, int hashSize, Map<Integer, Integer> distributionMap) throws IOException {
+        Path distributionFile = Paths.get(String.format("src/test/resources/out/%s_%s_%d-bits.distribution", dataSetShortName, hashName, hashSize));
 
         String distributionToWrite = distributionMap.entrySet()
                 .stream()

@@ -1,10 +1,10 @@
 package okulyk.projector.coursework.loglog.impl;
 
-import com.google.common.hash.HashFunction;
+import okulyk.projector.coursework.loglog.HashWrapper;
 
 public class HyperLogLog extends LogLogBase {
-    public HyperLogLog(HashFunction hashFunction, int countOfFirstBitsToTake) {
-        super(hashFunction, countOfFirstBitsToTake);
+    public HyperLogLog(HashWrapper hashWrapper, int countOfFirstBitsToTake) {
+        super(hashWrapper, countOfFirstBitsToTake);
     }
 
     @Override

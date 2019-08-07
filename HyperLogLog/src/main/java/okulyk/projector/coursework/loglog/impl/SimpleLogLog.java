@@ -1,11 +1,11 @@
 package okulyk.projector.coursework.loglog.impl;
 
-import com.google.common.hash.HashFunction;
+import okulyk.projector.coursework.loglog.HashWrapper;
 
 public class SimpleLogLog extends LogLogBase {
 
-    public SimpleLogLog(HashFunction hashFunction, int countOfFirstBitsToTake) {
-        super(hashFunction, countOfFirstBitsToTake);
+    public SimpleLogLog(HashWrapper hashWrapper, int countOfFirstBitsToTake) {
+        super(hashWrapper, countOfFirstBitsToTake);
     }
 
     public int getCardinality() {
