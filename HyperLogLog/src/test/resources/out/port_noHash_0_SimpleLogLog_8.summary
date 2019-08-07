@@ -1,6 +1,0 @@
-Dataset: Port
-Hash function: noHash, hash size: noHash, algorithm: SimpleLogLog, first bits count to take: 8
-
-Requests count: 3577297, actual cardinality: 40520, calculated cardinality: 209
-Absolute mistake: -40311, mistake in percentage: -99.48
-Memory for set: 3.6105575561523438Mb, memory for LogLog: 1.015625Kb

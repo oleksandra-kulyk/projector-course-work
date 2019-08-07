@@ -1,6 +1,0 @@
-Dataset: Port
-Hash function: murmur3, hash size: murmur3, algorithm: SimpleLogLog, first bits count to take: 8
-
-Requests count: 3577297, actual cardinality: 40520, calculated cardinality: 82231
-Absolute mistake: 41711, mistake in percentage: 102.94
-Memory for set: 3.6105575561523438Mb, memory for LogLog: 1.015625Kb

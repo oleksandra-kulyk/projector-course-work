@@ -1,6 +1,0 @@
-Dataset: reddit_trump
-Hash function: murmur3, hash size: murmur3, algorithm: HyperLogLog, first bits count to take: 16
-
-Requests count: 195741, actual cardinality: 108026, calculated cardinality: 47281
-Absolute mistake: -60745, mistake in percentage: -56.23
-Memory for set: 43.15553283691406Mb, memory for LogLog: 256.015625Kb

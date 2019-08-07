@@ -1,6 +1,0 @@
-Dataset: IP
-Hash function: noHash, hash size: noHash, algorithm: HyperLogLog, first bits count to take: 12
-
-Requests count: 3577297, actual cardinality: 6567, calculated cardinality: 2972
-Absolute mistake: -3595, mistake in percentage: -54.74
-Memory for set: 716.7421875Kb, memory for LogLog: 16.015625Kb

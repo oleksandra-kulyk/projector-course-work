@@ -1,6 +1,0 @@
-Dataset: reddit_trump
-Hash function: noHash, hash size: noHash, algorithm: SuperLogLog, first bits count to take: 12
-
-Requests count: 195741, actual cardinality: 108026, calculated cardinality: 3252
-Absolute mistake: -104774, mistake in percentage: -96.99
-Memory for set: 43.15553283691406Mb, memory for LogLog: 16.015625Kb

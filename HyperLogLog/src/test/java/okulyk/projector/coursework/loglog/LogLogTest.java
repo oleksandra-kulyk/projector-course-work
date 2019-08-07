@@ -2,6 +2,7 @@ package okulyk.projector.coursework.loglog;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.hash.Hashing;
+import com.google.common.primitives.Ints;
 import net.sourceforge.sizeof.SizeOf;
 import okulyk.projector.coursework.loglog.hash.GuavaHashWrapper;
 import okulyk.projector.coursework.loglog.hash.NoHash;
@@ -64,7 +65,8 @@ public class LogLogTest {
 
     @Test
     public void realText() throws IOException {
-        Path path = Paths.get("src/test/resources/reddit_trump.csv");
+        String dataSetShortName = "reddit_trump";
+        Path path = Paths.get("src/test/resources/in/reddit_trump.csv");
 
         HashSet<String> hashSet = new HashSet<>();
         int requestsCount = 0;
@@ -80,23 +82,14 @@ public class LogLogTest {
             }
         }
 
-        int finalRequestsCount = requestsCount;
-        logLogs.forEach((key, value) ->
-        {
-            try {
-                dumpStatistic("reddit_trump", "reddit_trump", key.hashName, key.hashSize, key.algorithmName, key.bitsToTake,
-                        finalRequestsCount, hashSet, value);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-
-        dumpUniqueValues("reddit_trump", hashSet);
+        dumpStatistic(dataSetShortName, requestsCount, hashSet);
+        dumpUniqueValues(dataSetShortName, hashSet);
     }
 
     @Test
     public void ipDataset() throws IOException {
-        Path path = Paths.get("src/test/resources/Dataset-Unicauca-Version2-87Atts.csv");
+        String dataSetShortName = "ip";
+        Path path = Paths.get("src/test/resources/in/Dataset-Unicauca-Version2-87Atts.csv");
 
         HashSet<String> hashSet = new HashSet<>();
         int requestsCount = 0;
@@ -112,56 +105,165 @@ public class LogLogTest {
             requestsCount++;
         }
 
-        
-        int finalRequestsCount = requestsCount;
+        dumpStatistic(dataSetShortName, requestsCount, hashSet);
+        dumpUniqueValues(dataSetShortName, hashSet);
+    }
+
+    @Test
+    public void portDataset() throws IOException {
+        String dataSetShortName = "port";
+        Path path = Paths.get("src/test/resources/in/Dataset-Unicauca-Version2-87Atts.csv");
+
+        HashSet<String> hashSet = new HashSet<>();
+        int requestsCount = 0;
+
+        List<String> lines = Files.readAllLines(path);
+        for (String line : lines) {
+            String[] columns = line.split(",");
+            String ip = columns[2];
+
+            byte[] bytes = ip.getBytes();
+            logLogs.forEach((key, value) -> value.add(bytes));
+            hashSet.add(ip);
+            requestsCount++;
+        }
+
+        dumpStatistic(dataSetShortName, requestsCount, hashSet);
+        dumpUniqueValues(dataSetShortName, hashSet);
+    }
+
+    @Test
+    public void sequentialUniqueHundredThousandInts() throws IOException {
+        String dataSetShortName = "sequentialUniqueHundredThousandInts";
+
+        HashSet<Integer> hashSet = new HashSet<>();
+        int requestsCount = 100_000_000;
+
+        for (int i = 0; i < requestsCount; i++) {
+            byte[] bytes = Ints.toByteArray(i);
+            logLogs.forEach((key, value) -> value.add(bytes));
+            hashSet.add(i);
+
+            if (i % 10000 == 0) {
+                System.out.println(i);
+            }
+        }
+
+        dumpStatistic(dataSetShortName, requestsCount, hashSet);
+        dumpUniqueValues(dataSetShortName, hashSet);
+    }
+
+    @Test
+    public void randomHundredThousandInts() throws IOException {
+        String dataSetShortName = "randomHundredThousandInts";
+        Random random = new Random();
+
+
+        HashSet<Integer> hashSet = new HashSet<>();
+        int requestsCount = 100_000_000;
+
+        for (int i = 0; i < requestsCount; i++) {
+            int randomInt = random.nextInt();
+            byte[] bytes = Ints.toByteArray(randomInt);
+            logLogs.forEach((key, value) -> value.add(bytes));
+            hashSet.add(randomInt);
+
+            if (i % 10000 == 0) {
+                System.out.println(i);
+            }
+        }
+
+        dumpStatistic(dataSetShortName, requestsCount, hashSet);
+        dumpUniqueValues(dataSetShortName, hashSet);
+    }
+
+    @Test
+    public void sequentialUniqueTenThousandRepeatedInts() throws IOException {
+        String dataSetShortName = "sequentialUniqueTenThousandRepeatedInts";
+
+        HashSet<Integer> hashSet = new HashSet<>();
+        int requestsCount = 10_000;
+        int iterationsCount = 1000;
+
+        for (int j = 0; j < iterationsCount; j++) {
+            for (int i = 0; i < requestsCount; i++) {
+                byte[] bytes = Ints.toByteArray(i);
+                logLogs.forEach((key, value) -> value.add(bytes));
+                hashSet.add(i);
+            }
+            System.out.println(j);
+        }
+
+        int finalRequestsCount = requestsCount * iterationsCount;
+
+        dumpStatistic(dataSetShortName, finalRequestsCount, hashSet);
+        dumpUniqueValues(dataSetShortName, hashSet);
+    }
+
+
+    private void dumpStatistic(String dataSetShortName, int requestsCount, Set set) throws IOException {
+        dumpGeneralStatistic(dataSetShortName, requestsCount, set);
+        dumpBuckets(dataSetShortName);
+    }
+
+    private void dumpBuckets(String dataSetShortName) {
         logLogs.forEach((key, value) ->
         {
             try {
-                dumpStatistic("ip", "IP", key.hashName, key.hashSize, key.algorithmName, key.bitsToTake,
-                        finalRequestsCount, hashSet, value);
+                Path bucketsFile = Paths.get(String.format("src/test/resources/out/buckets/%s/%s_%s_%d_%s_%d.buckets",dataSetShortName, dataSetShortName, key.hashName, key.hashSize, key.algorithmName, key.bitsToTake));
+
+                String bucketsToFile = Arrays.stream(value.getMaxRankForBucket())
+                        .mapToObj(String::valueOf)
+                        .collect(Collectors.joining("\n"));
+
+                Files.write(bucketsFile, bucketsToFile.getBytes());
+                System.out.println("Buckets stored to file " + bucketsFile);
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
-        
-        dumpUniqueValues("ip", hashSet);
     }
 
-    private void dumpStatistic(String dataSetShortName, String dataSetDescription, String hashName, int hashSize, String algorithmName, int bitsToTake,
-                               int requestsCount, Set set, LogLog logLog) throws IOException {
+    private void dumpGeneralStatistic(String dataSetShortName, int requestsCount, Set set) throws IOException {
         int actualCardinality = set.size();
-        int calculatedCardinality = logLog.getCardinality();
-        int diff = calculatedCardinality - actualCardinality;
-        double diffInPercentage = (double) diff / actualCardinality * 100;
-
         String setMemory = SizeOf.humanReadable(SizeOf.deepSizeOf(set));
-        String logLogMemory = SizeOf.humanReadable(SizeOf.deepSizeOf(logLog.getMaxRankForBucket()));
 
-        Path summaryFile = Paths.get(String.format("src/test/resources/out/%s_%s_%d_%s_%d.summary", dataSetShortName, hashName, hashSize, algorithmName, bitsToTake));
+        Path summaryFile = Paths.get(String.format("src/test/resources/out/generalStats/%s.csv", dataSetShortName));
 
-        String statsText = String.format("Dataset: %s", dataSetDescription)
-                + String.format("\nHash function: %s, hash size: %s, algorithm: %s, first bits count to take: %d\n", hashName, hashName, algorithmName, bitsToTake)
-                + String.format("\nRequests count: %d, actual cardinality: %d, calculated cardinality: %d", requestsCount, actualCardinality, calculatedCardinality)
-                + String.format("\nAbsolute mistake: %d, mistake in percentage: %.2f", diff, diffInPercentage)
-                + String.format("\nMemory for set: %s, memory for LogLog: %s", setMemory, logLogMemory);
+        String header = "dataSetShortName,hashName,hashSize,algorithmName,bitsToTake,requestsCount,actualCardinality,calculatedCardinality,diff,diffInPercentage,setMemory,logLogMemory";
+        String results = logLogs.entrySet().stream()
+                .map(entry -> {
+                    int calculatedCardinality = entry.getValue().getCardinality();
+                    int diff = calculatedCardinality - actualCardinality;
+                    double diffInPercentage = (double) diff / actualCardinality * 100;
+                    String logLogMemory = SizeOf.humanReadable(SizeOf.deepSizeOf(entry.getValue().getMaxRankForBucket()));
 
-        System.out.println();
-        System.out.println(statsText);
-        Files.write(summaryFile, statsText.getBytes());
-        System.out.println("Stats stored to file " + summaryFile);
-
-        Path bucketsFile = Paths.get(String.format("src/test/resources/out/%s_%s_%d_%s_%d.buckets", dataSetShortName, hashName, hashSize, algorithmName, bitsToTake));
-
-        String bucketsToFile = Arrays.stream(logLog.getMaxRankForBucket())
-                .mapToObj(String::valueOf)
+                    return String.format("%s,%s,%d,%s,%d,%d,%d,%d,%d,%.2f,%s,%s",
+                            dataSetShortName,
+                            entry.getKey().hashName,
+                            entry.getKey().hashSize,
+                            entry.getKey().algorithmName,
+                            entry.getKey().bitsToTake,
+                            requestsCount,
+                            actualCardinality,
+                            calculatedCardinality,
+                            diff,
+                            diffInPercentage,
+                            setMemory,
+                            logLogMemory);
+                })
                 .collect(Collectors.joining("\n"));
 
-        Files.write(bucketsFile, bucketsToFile.getBytes());
-        System.out.println("Buckets stored to file " + bucketsFile);
+
+        System.out.println();
+        System.out.println(results);
+        Files.write(summaryFile, (header + "\n" + results) .getBytes());
+        System.out.println("Stats stored to file " + summaryFile);
     }
 
     private void dumpUniqueValues(String dataSetShortName, Set<?> set) throws IOException {
-        Path distinctDatasetFile = Paths.get(String.format("src/test/resources/out/%s-distinct.in", dataSetShortName));
+        Path distinctDatasetFile = Paths.get(String.format("src/test/resources/out/distinct/%s-distinct.in", dataSetShortName));
 
         String distinctDatasetString = set.stream()
                 .map(Object::toString)
